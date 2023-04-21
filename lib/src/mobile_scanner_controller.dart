@@ -63,8 +63,8 @@ class MobileScannerController {
 
   static const MethodChannel _methodChannel =
       MethodChannel('dev.steenbakker.mobile_scanner/scanner/method');
-  static const EventChannel _eventChannel =
-      EventChannel('dev.steenbakker.mobile_scanner/scanner/event');
+  static final Stream _eventChannel =
+      const EventChannel('dev.steenbakker.mobile_scanner/scanner/event').receiveBroadcastStream();
 
   @Deprecated(
     'Instead, use the result of calling `start()` to determine if permissions were granted.',
@@ -150,9 +150,7 @@ class MobileScannerController {
       return null;
     }
 
-    events ??= _eventChannel
-        .receiveBroadcastStream()
-        .listen((data) => _handleEvent(data as Map));
+    events ??= _eventChannel.listen((data) => _handleEvent(data as Map));
 
     isStarting = true;
 
@@ -293,9 +291,7 @@ class MobileScannerController {
   ///
   /// [path] The path of the image on the devices
   Future<bool> analyzeImage(String path) async {
-    events ??= _eventChannel
-        .receiveBroadcastStream()
-        .listen((data) => _handleEvent(data as Map));
+    events ??= _eventChannel.listen((data) => _handleEvent(data as Map));
 
     return _methodChannel
         .invokeMethod<bool>('analyzeImage', path)
